@@ -3,7 +3,8 @@
 import numpy as np
 
 from dwilib.fit import Parameter, Model
-import dwilib.util
+from dwilib.util import normalize_si_curve
+
 
 """
 Im Matlab, we are using lsqnonlin and following initializations:
@@ -101,7 +102,7 @@ Models.append(Model(
     'Normalized signal intensity values',
     None,
     [],
-    preproc=dwilib.util.normalize_si_curve))
+    preproc=normalize_si_curve))
 
 Models.append(Model(
     'Mono',
@@ -118,7 +119,7 @@ Models.append(Model(
     [
         Parameter('ADCmN', (0.0001, 0.003, 0.00001), (0, 1)),
         ],
-    preproc=dwilib.util.normalize_si_curve))
+    preproc=normalize_si_curve))
 
 Models.append(Model(
     'Kurt',
@@ -137,7 +138,7 @@ Models.append(Model(
         Parameter('ADCkN', (0.0001, 0.003, 0.00002), (0, 1)),
         Parameter('KN', (0.0, 2.0, 0.1), (0, 10)),
         ],
-    preproc=dwilib.util.normalize_si_curve))
+    preproc=normalize_si_curve))
 
 Models.append(Model(
     'Stretched',
@@ -156,7 +157,7 @@ Models.append(Model(
         Parameter('ADCsN', (0.0001, 0.003, 0.00002), (0, 1)),
         Parameter('AlphaN', (0.1, 1.0, 0.05), (0, 1)),
         ],
-    preproc=dwilib.util.normalize_si_curve))
+    preproc=normalize_si_curve))
 
 Models.append(Model(
     'Biexp',
@@ -178,7 +179,7 @@ Models.append(Model(
         Parameter('DfN', (0.001, 0.009, 0.0002), (0, 1)),
         Parameter('DsN', (0.000, 0.004, 0.00002), (0, 1)),
         ],
-    preproc=dwilib.util.normalize_si_curve,
+    preproc=normalize_si_curve,
     postproc=biexp_flip))
 
 Models.append(Model(

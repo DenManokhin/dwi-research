@@ -4,10 +4,7 @@ from itertools import product
 
 import numpy as np
 
-import dwilib.fit_one_by_one
-
-# Select fitting implementation.
-fit_curves_mi = dwilib.fit_one_by_one.fit_curves_mi
+from dwilib.fit_one_by_one import fit_curves_mi, fit_curves_mi_mp
 
 
 class Parameter(object):
@@ -92,7 +89,7 @@ class Model(object):
         """Return all combinations of initial guesses."""
         return product(*[x.guesses(c) for x in self.params])
 
-    def fit(self, xdata, ydatas):
+    def fit(self, xdata, ydatas, use_scipy=False, known_params=None, multiprocess=False):
         """Fit model to multiple voxels."""
         xdata = np.asanyarray(xdata)
         ydatas = np.asanyarray(ydatas)
@@ -103,8 +100,9 @@ class Model(object):
         shape = (len(ydatas), len(self.params) + 1)
         pmap = np.zeros(shape)
         if self.func:
-            fit_curves_mi(self.func, xdata, ydatas, self.guesses,
-                          self.bounds(), pmap)
+            fit_curves_func = fit_curves_mi_mp if multiprocess else fit_curves_mi
+            fit_curves_func(self.func, xdata, ydatas, self.guesses,
+                            self.bounds(), pmap, use_scipy, known_params)
         else:
             pmap[:, :-1] = ydatas  # Fill with original data.
         if self.postproc:

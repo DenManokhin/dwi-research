@@ -2,7 +2,7 @@ import numpy as np
 from numfracpy import Mittag_Leffler_one
 
 
-def adc_mlf_alpha(b, delta, ADCs, alpha):
+def adc_mlf_alpha(ADCs, alpha, b, delta):
     """ADC MLF alpha
 
     MLF_alpha(-ADCs * |k|^2 * t^alpha)

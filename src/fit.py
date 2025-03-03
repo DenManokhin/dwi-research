@@ -17,6 +17,7 @@ def fit(
         model: Model,
         mask: "np.ndarray|None" = None,
         use_scipy: bool = False,
+        multiprocess: bool = False,
         known_params: np.ndarray = None
     ) -> np.ndarray:
     """
@@ -31,7 +32,7 @@ def fit(
     image = image.reshape(-1, len(timepoints))
     assert len(timepoints) == len(image[0]), len(image[0])
 
-    pmap = model.fit(timepoints, image)
+    pmap = model.fit(timepoints, image, use_scipy, known_params, multiprocess)
 
     if mask is not None:
         pmap = restore_masked_result(pmap, mask)
