@@ -6,7 +6,7 @@ class CDMDDataset:
     def __init__(self, data_root: Path):
         self.data_root = data_root
         self.Gs = [31, 68, 105, 142, 179, 216, 253, 290]
-        self.small_delta = 27
+        self.small_delta = 8
     
     def load_sample(self, sample: str, big_delta: float, slice_id: int) -> dict:
         sample_subfolder = self.data_root / sample / "dwi" / f"{sample}_dwi"

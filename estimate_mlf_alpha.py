@@ -8,7 +8,7 @@ from src.mlf_alpha_estimator import estimate_mlf_alpha
 
 if __name__ == "__main__":
     dataset_root = Path("../CDMD")
-    mlf_fit_path = Path("../CDMD/results/mlf_alpha_fit.npy")
+    mlf_fit_path = Path("../CDMD/results/mlf_alpha_fit_fix_delta.npy")
     big_delta = 19
     slice_id = 50
 
