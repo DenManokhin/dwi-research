@@ -1,6 +1,16 @@
 import numpy as np
 import nibabel as nb
 from pathlib import Path
+from dataclasses import dataclass
+
+
+@dataclass
+class Sample:
+    image: np.ndarray
+    timepoints: np.ndarray
+    mask: np.ndarray
+    delta: float
+
 
 class CDMDDataset:
     def __init__(self, data_root: Path):
@@ -8,7 +18,7 @@ class CDMDDataset:
         self.Gs = [31, 68, 105, 142, 179, 216, 253, 290]
         self.small_delta = 8
     
-    def load_sample(self, sample: str, big_delta: float, slice_id: int) -> dict:
+    def load_sample(self, sample: str, big_delta: float, slice_id: int) -> Sample:
         sample_subfolder = self.data_root / sample / "dwi" / f"{sample}_dwi"
 
         img_filename = f"{sample_subfolder}.nii.gz"
@@ -27,7 +37,17 @@ class CDMDDataset:
             mean_img = np.mean(img[:, :, bval_mask], axis=2)
             data.append({"img": mean_img, "bval": bval})
         data = sorted(data, key=lambda x: x["bval"])
-        for item, g in zip(data, self.Gs):
-            item["g"] = g
 
-        return data, mask
+        image = np.dstack([x["img"] for x in data])
+        image = np.expand_dims(image, axis=2)
+        timepoints = np.asarray([x["bval"] for x in data])
+        delta = big_delta - self.small_delta / 3
+
+        sample = Sample(
+            image = image,
+            timepoints = timepoints,
+            mask = mask,
+            delta = delta
+        )
+
+        return sample

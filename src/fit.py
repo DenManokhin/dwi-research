@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 from dwilib.fit import Model
 
@@ -19,7 +20,7 @@ def fit(
         use_scipy: bool = False,
         multiprocess: bool = False,
         known_params: np.ndarray = None
-    ) -> np.ndarray:
+    ) -> dict:
     """
     Fit model to image.
         image - (W, H, n_slices, n_bvalues) image
@@ -38,4 +39,9 @@ def fit(
         pmap = restore_masked_result(pmap, mask)
     else:
         pmap = pmap.reshape(shape + (pmap.shape[-1],))
-    return pmap
+
+    pmap_names = [param.name for param in model.params] + ["error"]
+    pmap_values = cv2.split(pmap)
+    pmaps_dict = dict(zip(pmap_names, pmap_values))
+
+    return pmaps_dict
