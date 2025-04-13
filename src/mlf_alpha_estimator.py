@@ -10,8 +10,13 @@ from dwilib.fit import Model, Parameter
 from dwilib.util import normalize_si_curve
 
 
+def unpack_params(f, p, x):
+    return f(*p, x)
+
+
 def estimate_mlf_alpha(sample: Sample) -> dict:
     mlf_alpha_wrapper = partial(adc_mlf_alpha, delta=sample.delta)
+    mlf_alpha_wrapper = partial(unpack_params, mlf_alpha_wrapper)
 
     mlf_alpha_model = Model(
         'Alpha',
@@ -19,6 +24,7 @@ def estimate_mlf_alpha(sample: Sample) -> dict:
         mlf_alpha_wrapper,
         [
             Parameter('D_MLF', (0.5, 0.51, 1.0), (0, 1)),
+            # Parameter('D_MLF', (0.0015, 0.0016, 1.0), (0, 0.003)),
             Parameter('Alpha', (0.5, 0.51, 1.0), (0.1, 1)),
         ],
         preproc=normalize_si_curve)

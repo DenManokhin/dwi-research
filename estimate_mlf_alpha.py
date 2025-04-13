@@ -11,7 +11,7 @@ from src.util import save_results, load_results, plot_results,\
 
 if __name__ == "__main__":
     big_delta = 19
-    slice_id = 50
+    slice_id = 54
     sample_name = "sub_005"
     dataset_root = Path("../CDMD")
     results_dir = Path("../CDMD/results_mlf_alpha/") / sample_name / str(slice_id)
@@ -23,6 +23,7 @@ if __name__ == "__main__":
     if not ("D_MLF" in results and "Alpha" in results):
         results = estimate_mlf_alpha(sample)
 
+    results["D_MLF_raw"] = results["D_MLF"].copy()
     results["D_MLF"] = np.clip(results["D_MLF"], 0, 0.01)
     D, alpha = results["D_MLF"], results["Alpha"]
     entropy = compute_entropy(sample, D, alpha)
@@ -34,3 +35,4 @@ if __name__ == "__main__":
     plot_results(results, names=["Alpha", "D_MLF", "K", "H"],
                  fig=fig, axes=np.ravel(axes))
     plt.show()
+    fig.savefig(results_dir / "vis.png", dpi=300)

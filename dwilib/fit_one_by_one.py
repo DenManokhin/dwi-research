@@ -111,7 +111,7 @@ def fit_curve_mi(f, xdata, ydata, guesses, bounds, use_scipy=False,
 def fit_curve(f, xdata, ydata, guess, bounds, known_params=[]):
     """Fit a curve to data."""
     def residual(p, x, y):
-        return f(*np.concatenate([known_params, p]), x) - y
+        return f(np.concatenate([known_params, p]), x) - y
 
     params, ier = leastsqbound(residual, guess, args=(xdata, ydata),
                                bounds=bounds)
@@ -125,7 +125,7 @@ def fit_curve(f, xdata, ydata, guess, bounds, known_params=[]):
 def fit_curve_sp(f, xdata, ydata, guess, bounds, known_params=[]):
     """Fit a curve to data using scipy least squares."""
     def residual(p, x, y):
-        return f(*np.concatenate([known_params, p]), x) - y
+        return f(np.concatenate([known_params, p]), x) - y
 
     bounds = list(zip(*bounds))
     result = least_squares(residual, guess, args=(xdata, ydata),

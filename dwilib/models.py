@@ -1,6 +1,7 @@
 """Parametric model definitions used for signal decay curve fitting."""
 
 import numpy as np
+from functools import partial
 
 from dwilib.fit import Parameter, Model
 from dwilib.util import normalize_si_curve
@@ -40,6 +41,10 @@ def biexp_flip(params):
     if params[1] < params[2]:
         params[1], params[2] = params[2], params[1]
         params[0] = 1.0 - params[0]
+
+
+def unpack_params(f, p, x):
+    return f(x, *p)
 
 
 # Model functions.
@@ -107,7 +112,7 @@ Models.append(Model(
 Models.append(Model(
     'Mono',
     'ADC monoexponential',
-    lambda p, x: adcm(x, *p),
+    partial(unpack_params, adcm),
     [
         Parameter('ADCm', (0.0001, 0.003, 0.00001), (0, 1)),
         ParamC
@@ -115,7 +120,7 @@ Models.append(Model(
 Models.append(Model(
     'MonoN',
     'Normalized ADC monoexponential',
-    lambda p, x: adcm(x, *p),
+    partial(unpack_params, adcm),
     [
         Parameter('ADCmN', (0.0001, 0.003, 0.00001), (0, 1)),
         ],
@@ -124,7 +129,7 @@ Models.append(Model(
 Models.append(Model(
     'Kurt',
     'ADC kurtosis',
-    lambda p, x: adck(x, *p),
+    partial(unpack_params, adck),
     [
         Parameter('ADCk', (0.0001, 0.003, 0.00002), (0, 1)),
         Parameter('K', (0.0, 2.0, 0.1), (0, 10)),
@@ -133,7 +138,7 @@ Models.append(Model(
 Models.append(Model(
     'KurtN',
     'Normalized ADC kurtosis',
-    lambda p, x: adck(x, *p),
+    partial(unpack_params, adck),
     [
         Parameter('ADCkN', (0.0001, 0.003, 0.00002), (0, 1)),
         Parameter('KN', (0.0, 2.0, 0.1), (0, 10)),
@@ -143,7 +148,7 @@ Models.append(Model(
 Models.append(Model(
     'Stretched',
     'ADC stretched',
-    lambda p, x: adcs(x, *p),
+    partial(unpack_params, adcs),
     [
         Parameter('ADCs', (0.0001, 0.003, 0.00002), (0, 1)),
         Parameter('Alpha', (0.1, 1.0, 0.05), (0, 1)),
@@ -152,7 +157,7 @@ Models.append(Model(
 Models.append(Model(
     'StretchedN',
     'Normalized ADC stretched',
-    lambda p, x: adcs(x, *p),
+    partial(unpack_params, adcs),
     [
         Parameter('ADCsN', (0.0001, 0.003, 0.00002), (0, 1)),
         Parameter('AlphaN', (0.1, 1.0, 0.05), (0, 1)),
@@ -162,7 +167,7 @@ Models.append(Model(
 Models.append(Model(
     'Biexp',
     'Bi-exponential',
-    lambda p, x: biexp(x, *p),
+    partial(unpack_params, biexp),
     [
         Parameter('Af', (0.2, 1.0, 0.1), (0, 1)),
         Parameter('Df', (0.001, 0.009, 0.0002), (0, 1)),
@@ -173,7 +178,7 @@ Models.append(Model(
 Models.append(Model(
     'BiexpN',
     'Normalized Bi-exponential',
-    lambda p, x: biexp(x, *p),
+    partial(unpack_params, biexp),
     [
         Parameter('AfN', (0.2, 1.0, 0.1), (0, 1)),
         Parameter('DfN', (0.001, 0.009, 0.0002), (0, 1)),
@@ -185,7 +190,7 @@ Models.append(Model(
 Models.append(Model(
     'T2',
     'T2 relaxation',
-    lambda p, x: t2(x, *p),
+    partial(unpack_params, t2),
     [
         Parameter('T2', (1, 300, 50), (1, 300)),
         Parameter('C', (0.25, 1, 0.5), (0, 1e9), relative=True)
